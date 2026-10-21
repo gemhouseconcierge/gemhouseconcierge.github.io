@@ -1,0 +1,24 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Round brilliant proportion calculator – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Round brilliant proportion calculator</h1><p class="lead">Enter measurements to derive the key proportions and see how they compare with typical excellent-cut ranges.</p>
+
+<div class="card"><div class="row">
+<div><label>Average diameter (mm)</label><input id="dia" type="number" step="0.01" value="6.50"></div>
+<div><label>Table width (mm)</label><input id="tab" type="number" step="0.01" value="3.70"></div>
+<div><label>Total depth (mm)</label><input id="dep" type="number" step="0.01" value="4.00"></div>
+<div><label>Crown height (mm)</label><input id="ch" type="number" step="0.01" value="0.97"></div>
+<div><label>Pavilion depth (mm)</label><input id="pd" type="number" step="0.01" value="2.80"></div>
+</div></div>
+<div class="card tablewrap"><table><thead><tr><th>Proportion</th><th>Value</th><th>Typical excellent range</th><th></th></tr></thead><tbody id="tb"></tbody></table>
+<p class="note">Angles are derived geometrically: crown angle = atan(crown height ÷ ((diameter − table) ÷ 2)); pavilion angle = atan(pavilion depth ÷ (diameter ÷ 2)). Girdle = total depth − crown − pavilion. Ranges are guides only – cut grade depends on the full combination of proportions, symmetry and polish.</p></div>
+<script>
+const deg=r=>r*180/Math.PI;
+function calc(){const D=+dia.value,T=+tab.value,H=+dep.value,C=+ch.value,P=+pd.value;
+const rows=[['Table %',T/D*100,53,58,'%'],['Total depth %',H/D*100,59,62.6,'%'],['Crown height %',C/D*100,14,16,'%'],['Pavilion depth %',P/D*100,42.5,43.5,'%'],
+['Crown angle',deg(Math.atan(C/((D-T)/2))),33.5,35.5,'°'],['Pavilion angle',deg(Math.atan(P/(D/2))),40.6,41.0,'°'],['Girdle %',(H-C-P)/D*100,2.5,4.5,'%']];
+window.props=Object.fromEntries(rows.map(r=>[r[0],r[1]]));
+tb.innerHTML=rows.map(([n,v,a,b,u])=>`<tr><td>${n}</td><td>${v.toFixed(1)}${u}</td><td>${a}–${b}${u}</td><td class="${v>=a&&v<=b?'ok':'warn'}">${v>=a&&v<=b?'Within':'Outside'}</td></tr>`).join('')}
+document.querySelectorAll('input').forEach(e=>e.oninput=calc);calc();
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>

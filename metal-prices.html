@@ -1,0 +1,25 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Precious metal converter – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Precious metal converter</h1><p class="lead">Live spot prices for gold, silver and platinum, converted to Australian dollars per gram and by purity.</p>
+
+<div class="card"><div class="row">
+<div><label>Metal</label><select id="metal"><option value="XAU">Gold</option><option value="XAG">Silver</option><option value="XPT">Platinum</option></select></div>
+<div><label>Purity</label><select id="pur"></select></div>
+<div><label>Weight</label><input id="wt" type="number" value="10" step="0.01"></div>
+<div><label>Unit</label><select id="unit"><option value="1">grams</option><option value="31.1034768">troy ounces</option><option value="0.2">carats (metric)</option><option value="1.55517384">pennyweight</option></select></div>
+<div><label>Currency</label><select id="cur"><option>AUD</option><option>USD</option><option>NZD</option><option>GBP</option><option>EUR</option></select></div></div>
+<p>Metal value: <span class="result" id="out">Loading…</span></p><p class="note" id="st"></p></div>
+<div class="card note">Spot prices from gold-api.com and exchange rates from open.er-api.com (both free and keyless). This is the raw metal value only – it doesn't include manufacturing, refining margins or GST, and it isn't a valuation or a quote.</div>
+<script>
+const PUR={XAU:[['24k (99.9%)',.999],['22k (91.6%)',.916],['18k (75%)',.75],['14k (58.5%)',.585],['9k (37.5%)',.375]],XAG:[['Fine (99.9%)',.999],['Sterling (92.5%)',.925]],XPT:[['950 platinum',.95],['900 platinum',.9],['999 platinum',.999]]};
+let spot={},fx={USD:1},ok=false;const OZ=31.1034768;
+function fillP(){pur.innerHTML=PUR[metal.value].map(([n,v])=>`<option value="${v}">${n}</option>`).join('')}
+function calc(){if(!ok)return;const p=spot[metal.value]/OZ*fx[cur.value];const v=p*(+pur.value)*(+wt.value)*(+unit.value);
+out.textContent=new Intl.NumberFormat('en-AU',{style:'currency',currency:cur.value}).format(v);window.metalValue=v;
+st.textContent=`Spot ${metal.options[metal.selectedIndex].text}: ${new Intl.NumberFormat('en-AU',{style:'currency',currency:cur.value}).format(p)} per gram (pure) – updated ${new Date().toLocaleString('en-AU')}`}
+async function load(){try{const r=await Promise.all(['XAU','XAG','XPT'].map(s=>fetch('https://api.gold-api.com/price/'+s).then(r=>r.json())));r.forEach((j,i)=>spot[['XAU','XAG','XPT'][i]]=j.price);
+const f=await fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json());fx=f.rates;ok=true;calc()}catch(e){out.textContent='Prices unavailable';st.textContent='Could not reach the live price service – please try again shortly.'}}
+metal.oninput=()=>{fillP();calc()};[pur,wt,unit,cur].forEach(e=>e.oninput=calc);fillP();load();setInterval(load,300000);
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>

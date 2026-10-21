@@ -1,0 +1,19 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image comparison slider – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Image comparison slider</h1><p class="lead">Compare two photos side by side with a draggable slider – before and after, natural and lab-grown, or two colour grades.</p>
+
+<div class="card"><div class="row"><div><label>Left image</label><input type="file" id="fa" accept="image/*"></div><div><label>Right image</label><input type="file" id="fb" accept="image/*"></div></div>
+<div id="box" style="position:relative;margin-top:1rem;user-select:none;touch-action:none;overflow:hidden;border-radius:8px;aspect-ratio:4/3;background:#eee">
+<img id="ib" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"><div id="clip" style="position:absolute;inset:0;width:50%;overflow:hidden"><img id="ia" style="position:absolute;inset:0;height:100%;object-fit:cover"></div>
+<div id="bar" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 4px #000;cursor:ew-resize"><div style="position:absolute;top:50%;left:-14px;width:31px;height:31px;margin-top:-15px;border-radius:50%;background:#1b2a4a;border:2px solid #fff"></div></div></div>
+<input type="range" id="rg" min="0" max="100" value="50" style="margin-top:.6rem"></div>
+<script>
+function demo(col1,col2,txt){const c=document.createElement('canvas');c.width=800;c.height=600;const x=c.getContext('2d');const g=x.createRadialGradient(400,300,30,400,300,420);g.addColorStop(0,col1);g.addColorStop(1,col2);x.fillStyle=g;x.fillRect(0,0,800,600);x.fillStyle='#fff';x.font='40px Georgia';x.textAlign='center';x.fillText(txt,400,560);return c.toDataURL()}
+ia.src=demo('#f5ecd9','#b08d57','Image A');ib.src=demo('#dfe8f5','#1b2a4a','Image B');
+function set(p){p=Math.max(0,Math.min(100,p));clip.style.width=p+'%';bar.style.left=p+'%';rg.value=p;ia.style.width=box.clientWidth+'px'}
+rg.oninput=()=>set(+rg.value);let drag=false;box.onpointerdown=e=>{drag=true;mv(e)};onpointerup=()=>drag=false;box.onpointermove=e=>drag&&mv(e);
+function mv(e){const r=box.getBoundingClientRect();set((e.clientX-r.left)/r.width*100)}addEventListener('resize',()=>set(+rg.value));
+[[fa,ia],[fb,ib]].forEach(([f,i])=>f.onchange=()=>{if(f.files[0])i.src=URL.createObjectURL(f.files[0])});set(50);
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>

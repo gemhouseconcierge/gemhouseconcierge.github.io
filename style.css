@@ -1,0 +1,22 @@
+
+:root{--ivory:#faf6ee;--cream:#f1e9da;--navy:#1b2a4a;--navy2:#2e4170;--gold:#b08d57;--ink:#22252b}
+*{box-sizing:border-box;accent-color:#1b2a4a}body{margin:0;background:var(--ivory);color:var(--ink);font:16px/1.55 "Helvetica Neue",Arial,sans-serif}
+h1,h2,h3,.wm{font-family:"Bodoni Moda","Playfair Display",Didot,Georgia,serif;font-stretch:condensed;letter-spacing:.02em;color:var(--navy);font-weight:500}
+header{background:var(--navy);color:var(--ivory);padding:.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+header .wm{color:var(--ivory);font-size:1.05rem;text-transform:uppercase;letter-spacing:.18em;text-decoration:none}
+header nav a{color:var(--cream);text-decoration:none;font-size:.85rem;margin-left:1rem}
+main{max-width:980px;margin:0 auto;padding:1.5rem 1rem 3rem}
+h1{font-size:2.2rem;margin:.3rem 0}.lead{color:#555;margin-top:0}
+.card{background:#fff;border:1px solid #e6dcc8;border-radius:10px;padding:1.2rem;margin:1rem 0;box-shadow:0 2px 8px rgba(27,42,74,.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.grid a.card{display:block;text-decoration:none;color:inherit;margin:0;transition:.2s}.grid a.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+label{display:block;font-size:.85rem;color:var(--navy2);margin:.5rem 0 .2rem}
+input,select,textarea,button{font:inherit;padding:.5rem .6rem;border:1px solid #cfc3ab;border-radius:6px;background:#fff;width:100%}
+button{background:var(--navy);color:var(--ivory);border:0;cursor:pointer;width:auto;padding:.55rem 1.1rem;margin:.3rem .3rem 0 0}button:hover{background:var(--navy2)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem}
+.result{font-family:Georgia,serif;font-size:1.6rem;color:var(--navy)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{border-bottom:1px solid #e6dcc8;padding:.4rem;text-align:left}th{color:var(--navy);background:var(--cream)}
+.tablewrap{overflow-x:auto}.note{font-size:.85rem;color:#666}
+.ok{color:#2e6b3a}.warn{color:#a0522d}
+footer{text-align:center;font-size:.85rem;color:#666;padding:2rem 1rem;border-top:1px solid #e6dcc8}footer a{color:var(--navy)}
+@media print{header nav,footer,.noprint{display:none}body{background:#fff}.card{box-shadow:none}}

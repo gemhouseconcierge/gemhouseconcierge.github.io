@@ -1,0 +1,40 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diamond plot generator – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Diamond plot generator</h1><p class="lead">Plot clarity characteristics on a round brilliant crown and pavilion diagram, then export a PNG.</p>
+
+<div class="card"><div class="row">
+<div><label>Characteristic</label><select id="kind">
+<option value="crystal">Crystal (red outline)</option><option value="pinpoint">Pinpoint (red dot)</option><option value="feather">Feather (red line)</option><option value="cloud">Cloud (red dots)</option><option value="needle">Needle (red line)</option><option value="chip">Chip (red)</option><option value="natural">Natural (green)</option><option value="extra">Extra facet (black)</option></select></div>
+<div><label>Stone reference</label><input id="ref" value="GHC-001"></div></div>
+<p class="note">Click anywhere on the crown (left) or pavilion (right) view to place the selected characteristic. Internal = red, external = green, extra facets = black.</p>
+<canvas id="cv" width="900" height="470" style="width:100%;border:1px solid #e6dcc8;border-radius:6px;cursor:crosshair;background:#fff"></canvas>
+<button id="undo">Undo</button><button id="clr">Clear</button><button id="png">Export PNG</button>
+<div class="note" id="key"></div></div>
+<script>
+const c=cv.getContext('2d'),marks=[];const R=190,C1=[225,240],C2=[675,240];
+function oct(cx,cy,r,rot){c.beginPath();for(let i=0;i<8;i++){const a=rot+i*Math.PI/4;c.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a))}c.closePath();c.stroke()}
+function base(){c.fillStyle='#fff';c.fillRect(0,0,900,470);c.strokeStyle='#1b2a4a';c.lineWidth=1.2;
+c.font='16px Georgia';c.fillStyle='#1b2a4a';c.fillText('Crown',C1[0]-24,24);c.fillText('Pavilion',C2[0]-30,24);c.fillText(ref.value,10,462);
+for(const [x,y] of [C1,C2]){c.beginPath();c.arc(x,y,R,0,7);c.stroke()}
+const [x,y]=C1,t=R*.57,rot=Math.PI/8;oct(x,y,t,rot);
+for(let i=0;i<8;i++){const a=rot+i*Math.PI/4,a2=a+Math.PI/8,b=rot+(i+1)*Math.PI/4;const P=[x+t*Math.cos(a),y+t*Math.sin(a)],S=[x+R*.8*Math.cos(a2),y+R*.8*Math.sin(a2)],Q=[x+t*Math.cos(b),y+t*Math.sin(b)];
+c.beginPath();c.moveTo(...P);c.lineTo(...S);c.lineTo(...Q);c.stroke();c.beginPath();c.moveTo(...P);c.lineTo(x+R*Math.cos(a),y+R*Math.sin(a));c.lineTo(...S);c.lineTo(x+R*Math.cos(a2+Math.PI/8-Math.PI/8+Math.PI/8),y+R*Math.sin(a2+Math.PI/8));c.stroke();
+c.beginPath();c.moveTo(...S);c.lineTo(x+R*Math.cos(a2),y+R*Math.sin(a2));c.stroke()}
+const [u,v]=C2;for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4,a2=a+Math.PI/8;c.beginPath();c.moveTo(u,v);c.lineTo(u+R*Math.cos(a),v+R*Math.sin(a));c.stroke();
+c.beginPath();c.moveTo(u+R*.55*Math.cos(a),v+R*.55*Math.sin(a));c.lineTo(u+R*Math.cos(a2),v+R*Math.sin(a2));c.lineTo(u+R*.55*Math.cos(a+Math.PI/4),v+R*.55*Math.sin(a+Math.PI/4));c.stroke()}
+c.beginPath();c.arc(u,v,3,0,7);c.stroke()}
+const COL={natural:'#1d8a3a',extra:'#000'};
+function draw(m){c.strokeStyle=c.fillStyle=COL[m.k]||'#c0141c';c.lineWidth=2;const{x,y}=m;
+switch(m.k){case'crystal':c.beginPath();c.ellipse(x,y,7,5,.4,0,7);c.stroke();break;case'pinpoint':c.beginPath();c.arc(x,y,2,0,7);c.fill();break;
+case'feather':case'needle':c.beginPath();c.moveTo(x-10,y+6);c.lineTo(x+10,y-6);c.stroke();if(m.k==='feather'){c.beginPath();c.moveTo(x,y);c.lineTo(x+4,y+6);c.stroke()}break;
+case'cloud':for(let i=0;i<7;i++){c.beginPath();c.arc(x+Math.cos(i)*6,y+Math.sin(i*2)*5,1.3,0,7);c.fill()}break;
+case'chip':c.beginPath();c.moveTo(x-5,y+4);c.lineTo(x,y-5);c.lineTo(x+5,y+4);c.closePath();c.fill();break;
+default:c.beginPath();c.moveTo(x-6,y);c.lineTo(x+6,y);c.moveTo(x,y-6);c.lineTo(x,y+6);c.stroke()}}
+function render(){base();marks.forEach(draw);const k={};marks.forEach(m=>k[m.k]=(k[m.k]||0)+1);key.textContent='Key to symbols: '+(Object.entries(k).map(([a,b])=>a+' ×'+b).join(' – ')||'none plotted')}
+cv.onclick=e=>{const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*900/r.width,y=(e.clientY-r.top)*470/r.height;
+if(Math.hypot(x-C1[0],y-C1[1])<=R||Math.hypot(x-C2[0],y-C2[1])<=R){marks.push({x,y,k:kind.value});render()}};
+undo.onclick=()=>{marks.pop();render()};clr.onclick=()=>{marks.length=0;render()};ref.oninput=render;
+png.onclick=()=>{const a=document.createElement('a');a.download=(ref.value||'plot')+'.png';a.href=cv.toDataURL('image/png');a.click()};render();window.marks=marks;
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>

@@ -1,0 +1,24 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carat size visualiser – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Carat size visualiser</h1><p class="lead">See roughly how big a round diamond looks at true size on a finger or an ear. Calibrate your screen first for accuracy.</p>
+
+<div class="card"><div class="row">
+<div><label>Carat weight: <b id="cv">1.00</b> ct</label><input id="ct" type="range" min="0.1" max="5" step="0.05" value="1"></div>
+<div><label>View</label><select id="mode"><option value="finger">Ring finger</option><option value="ear">Earlobe (stud)</option></select></div>
+<div><label>Screen calibration – drag until the bar matches a standard bank card's long edge (85.6 mm)</label><input id="cal" type="range" min="2" max="8" step="0.01" value="3.78"></div></div>
+<div id="card" style="height:14px;background:#b08d57;border-radius:3px;margin:.4rem 0"></div>
+<p>Approximate diameter: <span class="result" id="mm"></span></p>
+<svg id="sv" viewBox="0 0 400 300" style="width:100%;max-width:520px;display:block;margin:auto;background:#f1e9da;border-radius:10px"></svg>
+<p class="note">Diameter assumes a well-cut round brilliant (about 6.5 mm at 1 ct; diameter scales with the cube root of weight). Fancy shapes of the same weight often look larger face-up.</p></div>
+<script>
+function draw(){const c=+ct.value,d=6.5*Math.cbrt(c),pxmm=+cal.value;cv.textContent=c.toFixed(2);mm.textContent=d.toFixed(1)+' mm';window.dia=d;
+card.style.width=(85.6*pxmm)+'px';const s=sv.getBoundingClientRect().width||400,k=pxmm*400/s,r=d/2*k;
+let g='';if(mode.value==='finger'){const fw=18*k;g=`<rect x="${200-fw/2}" y="0" width="${fw}" height="300" rx="${fw/2}" fill="#e8c4a8"/><rect x="${200-fw/2-2}" y="${150-1.0*k}" width="${fw+4}" height="${2*k}" fill="#d9d9d9" stroke="#999"/>`}
+else{g=`<path d="M200 10 C ${200+40*k*.6} 10 ${200+38*k*.6} ${120} ${200+15*k*.6} 280 C 160 300 120 260 140 200 C 150 120 150 10 200 10Z" fill="#e8c4a8"/>`}
+const cy=mode.value==='finger'?150:200,cx=mode.value==='finger'?200:175;
+g+=`<defs><radialGradient id="gd"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#dfe8f5"/><stop offset="1" stop-color="#8fa3c4"/></radialGradient></defs><circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#gd)" stroke="#9aa" stroke-width=".8"/><polygon points="${[0,1,2,3,4,5,6,7].map(i=>{const a=Math.PI/8+i*Math.PI/4;return (cx+r*.57*Math.cos(a))+','+(cy+r*.57*Math.sin(a))}).join(' ')}" fill="none" stroke="#9ab" stroke-width=".6"/>`;
+sv.innerHTML=g}
+[ct,mode,cal].forEach(e=>e.oninput=draw);addEventListener('resize',draw);draw();
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>

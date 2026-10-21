@@ -1,0 +1,32 @@
+<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crown and pavilion angle viewer – Gem House Concierge</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a class="wm" href="index.html">Gem House Concierge</a><nav><a href="index.html">All tools</a><a href="https://www.gemhouseconcierge.com">Gem House Concierge</a></nav></header>
+<main><h1>Crown and pavilion angle viewer</h1><p class="lead">Adjust the angles and table size to see a 3D round brilliant outline change in real time.</p>
+
+<div class="card"><div class="row">
+<div><label>Crown angle: <b id="cav">34.5</b>°</label><input id="ca" type="range" min="25" max="42" step="0.5" value="34.5"></div>
+<div><label>Pavilion angle: <b id="pav">40.8</b>°</label><input id="pa" type="range" min="37" max="44" step="0.1" value="40.8"></div>
+<div><label>Table: <b id="tav">57</b>%</label><input id="ta" type="range" min="50" max="68" step="1" value="57"></div>
+</div><p class="note" id="info"></p>
+<div id="view" style="width:100%;height:420px;background:#14203a;border-radius:8px"></div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+const el=document.getElementById('view'),R=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(devicePixelRatio);el.appendChild(R.domElement);
+const S=new THREE.Scene();S.background=new THREE.Color(0x14203a);const cam=new THREE.PerspectiveCamera(35,1,.1,100);cam.position.set(0,.6,4.2);cam.lookAt(0,0,0);
+S.add(new THREE.HemisphereLight(0xffffff,0x334466,1.2));const dl=new THREE.DirectionalLight(0xffffff,1.5);dl.position.set(2,3,2);S.add(dl);
+let mesh,edges;const N=16;
+function build(){const ca=+document.getElementById('ca').value*Math.PI/180,pa=+document.getElementById('pa').value*Math.PI/180,t=+document.getElementById('ta').value/100;
+['ca','pa','ta'].forEach(k=>document.getElementById(k+'v').textContent=document.getElementById(k).value);
+const r=1,g=.02,ch=(r-t*r)*Math.tan(ca),pd=r*Math.tan(pa);
+document.getElementById('info').textContent=`Crown height ${(ch/2*100).toFixed(1)}% · pavilion depth ${(pd/2*100).toFixed(1)}% · total depth ≈ ${((ch+pd+2*g)/2*100).toFixed(1)}%`;
+const pts=[];pts.push(new THREE.Vector2(0,-pd),new THREE.Vector2(r,-g),new THREE.Vector2(r,g),new THREE.Vector2(t*r,g+ch),new THREE.Vector2(0,g+ch));
+const geo=new THREE.LatheGeometry(pts,N);geo.translate(0,(pd-ch)/2,0);
+if(mesh){S.remove(mesh);S.remove(edges)}
+mesh=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:0xdfe8f5,flatShading:true,transparent:true,opacity:.85,shininess:120}));
+edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo,1),new THREE.LineBasicMaterial({color:0xb08d57}));S.add(mesh,edges)}
+document.querySelectorAll('input').forEach(e=>e.oninput=build);build();
+function size(){const w=el.clientWidth,h=el.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
+(function loop(){requestAnimationFrame(loop);mesh.rotation.y+=.005;edges.rotation.y=mesh.rotation.y;R.render(S,cam)})();window.viewerReady=true;
+</script>
+</main><footer>Built by Elloise Gee, IGI Graduate Gemologist · <a href="https://www.gemhouseconcierge.com">gemhouseconcierge.com</a><br>Estimates are for education only – they're not a substitute for a laboratory grading report.</footer></body></html>
